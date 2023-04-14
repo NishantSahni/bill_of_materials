@@ -1,0 +1,10 @@
+version: "1"
+services:
+  web:
+    build: ./web
+    environment:
+      FLASK_DEBUG: 1
+    ports:
+    - "8000:8000"
+    volumes:
+    - ./web:/app
