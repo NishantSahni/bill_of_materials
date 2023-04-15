@@ -363,7 +363,7 @@ def test_get_orphan(test_client, create_part):
     assert response.status_code == 201
 
 
-def test_get_assembly_first_level_children(test_client, create_multi_level_assembly):
+def test_get_assembly_first_children(test_client, create_multi_level_assembly):
     """
     GIVEN a FastAPI application
     WHEN the '/assembly/{assembly_name}/first' endpoint is requested (GET)
