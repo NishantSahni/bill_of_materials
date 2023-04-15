@@ -17,7 +17,7 @@ Application Structure
 
 <!--This section contains a short description of the application structure-->
 
-The RESTful APIs built using FastAPI reside in the [app.py](web/app.py) file.
+The Bill of Materials RESTful APIs built using FastAPI reside in the [app.py](web/app.py) file.
 
 The Pen Builder code resides in the [pen_builder.py](web/pen_builder.py) file.
 
