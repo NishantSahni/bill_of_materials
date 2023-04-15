@@ -1,5 +1,5 @@
 """
-This file contains the main application code
+This file contains the main API code for the Bill of Materials App
 """
 
 import json
@@ -15,6 +15,8 @@ from anytree.exporter import JsonExporter
 class PartModel(BaseModel):
     """
     Data model for POST part API
+        part_name : str
+            Name of part to create
     """
 
     part_name: str
@@ -23,6 +25,12 @@ class PartModel(BaseModel):
 class AssemblyModel(BaseModel):
     """
     Data model for POST assembly API
+        assembly_name : str
+            Name of assembly to create
+        part_names : list
+            Names of parts to add to assembly
+        subassembly_names : list, optional
+            Names of subassemblies to add to assembly
     """
 
     assembly_name: str
@@ -34,8 +42,6 @@ class AssemblyModel(BaseModel):
 gParts = {}
 # Key-Value pairs of all assembly names with their corresponding objects
 gAssemblies = {}
-# Key-value pair of all top level assembly names with their corresponding objects
-gAssembly_parts = {}
 # Dictionary to store assembly projects
 gProjects = {}
 
@@ -46,6 +52,7 @@ logging.basicConfig(
     filename="logs/app.log",
     filemode="a",
     format="%(name)s - %(levelname)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
 )
 
 
@@ -56,6 +63,17 @@ app = FastAPI()
 async def hello_world():
     """
     GET endpoint that returns hello world
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    Response
+        HTTP response object:
+            data : str
+                Hello World
     """
 
     return {"data": "Hello, World"}
@@ -65,6 +83,17 @@ async def hello_world():
 async def get_health():
     """
     GET endpoint that returns health
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    Response
+        HTTP response object:
+            status : str
+                status of app
     """
 
     return {"status": "Running"}
@@ -74,6 +103,19 @@ async def get_health():
 async def get_part():
     """
     GET endpoint that returns all created parts
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    Response
+        HTTP response object:
+            status : str
+                Status of request
+            data : JSON
+                JSON representation of list of parts
     """
 
     try:
@@ -90,6 +132,20 @@ async def get_part():
 async def get_part_by_name(part_name: str):
     """
     GET endpoint that returns a specific part based on part_name
+
+    Parameters
+    ----------
+    part_name : str
+        Name of part to get
+
+    Returns
+    -------
+    Response
+        HTTP response object:
+            status : str
+                Status of request
+            data : JSON
+                JSON representation of part
     """
 
     try:
@@ -106,6 +162,23 @@ async def get_part_by_name(part_name: str):
 async def post_part(part: PartModel):
     """
     POST endpoint that creates a new part
+
+    Parameters
+    ----------
+    part : PartModel
+        part_name: str
+            Name of part to create
+
+    Returns
+    -------
+    Response
+        HTTP response object:
+            status : str
+                Status of request
+            message : str
+                Response message
+            data : JSON
+                JSON representation of created part
     """
 
     try:
@@ -129,6 +202,20 @@ async def post_part(part: PartModel):
 async def delete_part(part_name: str):
     """
     DELETE endpoint that deletes a part by part_name
+
+    Parameters
+    ----------
+    part_name : str
+        Name of part to create
+
+    Returns
+    -------
+    Response
+        HTTP response object:
+            status : str
+                Status of request
+            message : str
+                Response message
     """
 
     try:
@@ -150,6 +237,20 @@ async def delete_part(part_name: str):
 async def get_part_ancestors(part_name: str):
     """
     GET endpoint that returns all assemblies that contain a specific child part
+
+    Parameters
+    ----------
+    part_name : str
+        Name of part to get ancestors of
+
+    Returns
+    -------
+    Response
+        HTTP response object:
+            status : str
+                Status of request
+            data : JSON
+                JSON representation of list of ancestors of part
     """
 
     try:
@@ -168,6 +269,19 @@ async def get_part_ancestors(part_name: str):
 async def get_assembly():
     """
     GET endpoint that returns all assemblies
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    Response
+        HTTP response object:
+            status : str
+                Status of request
+            data : JSON
+                JSON representation of list of all assemblies
     """
 
     try:
@@ -184,6 +298,20 @@ async def get_assembly():
 async def get_assembly_by_name(assembly_name: str):
     """
     GET endpoint that gets a specific assembly based on assembly_name
+
+    Parameters
+    ----------
+    assembly_name : str
+        Name of assembly to get
+
+    Returns
+    -------
+    Response
+        HTTP response object:
+            status : str
+                Status of request
+            data : JSON
+                JSON representation of assembly
     """
 
     try:
@@ -207,6 +335,27 @@ async def get_assembly_by_name(assembly_name: str):
 async def post_assembly(assembly: AssemblyModel):
     """
     POST endpoint that creates a new assembly
+
+    Parameters
+    ----------
+    part : AssemblyModel
+        assembly_name: str
+            Name of assembly to create
+        part_names : list
+            List of parts to assemble
+        subassembly_names : list, optional
+            List of assemblies to assemble
+
+    Returns
+    -------
+    Response
+        HTTP response object:
+            status : str
+                Status of request
+            message : str
+                Response message
+            data : JSON
+                JSON representation of created assembly
     """
 
     try:
@@ -250,11 +399,9 @@ async def post_assembly(assembly: AssemblyModel):
                     )
             # Attaching child assemblies to new assembly
             for subassembly_name in assembly.subassembly_names:
-                del gAssembly_parts[subassembly_name]
                 gAssemblies[subassembly_name].parent = new_assembly
 
         # Adding new assembly to top-level assembly and assembly data stores
-        gAssembly_parts[assembly.assembly_name] = new_assembly
         gAssemblies[assembly.assembly_name] = new_assembly
         return {
             "status": "Success",
@@ -272,6 +419,24 @@ async def post_assembly(assembly: AssemblyModel):
 async def detach_part_assembly(assembly_name: str, part_name: str):
     """
     PUT endpoint that detaches part_names from assembly
+
+    Parameters
+    ----------
+    assembly_name: str
+        Name of assembly to detach from
+    part_name: str
+        Name of part to detach
+
+    Returns
+    -------
+    Response
+        HTTP response object:
+            status : str
+                Status of request
+            message : str
+                Response message
+            data : JSON
+                JSON representation of assembly with detached part
     """
 
     try:
@@ -303,6 +468,24 @@ async def detach_part_assembly(assembly_name: str, part_name: str):
 async def attach_part_assembly(assembly_name: str, part_name: str):
     """
     POST endpoint that attaches part_names to assembly
+
+    Parameters
+    ----------
+    assembly_name : str
+        Name of assembly to attach to
+    part_name : str
+        Name of part to attach
+
+    Returns
+    -------
+    Response
+        HTTP response object:
+            status : str
+                Status of request
+            message : str
+                Response message
+            data : JSON
+                JSON representation of assembly with attached part
     """
 
     try:
@@ -332,6 +515,20 @@ async def attach_part_assembly(assembly_name: str, part_name: str):
 async def get_assembly_first_level_children(assembly_name: str):
     """
     GET endpoint that returns first level children of specific assembly
+
+    Parameters
+    ----------
+    assembly_name : str
+        Name of assembly to get first level children from
+
+    Returns
+    -------
+    Response
+        HTTP response object:
+            status : str
+                Status of request
+            data : JSON
+                JSON representation of a list of first level children
     """
 
     try:
@@ -355,6 +552,20 @@ async def get_assembly_first_level_children(assembly_name: str):
 async def get_assembly_children(assembly_name: str):
     """
     GET endpoint that returns all children of specific assembly
+
+    Parameters
+    ----------
+    assembly_name : str
+        Name of assembly to detach from
+
+    Returns
+    -------
+    Response
+        HTTP response object:
+            status : str
+                Status of request
+            data : JSON
+                JSON representation of a list of assembly children
     """
 
     try:
@@ -378,6 +589,20 @@ async def get_assembly_children(assembly_name: str):
 async def get_assembly_leaves(assembly_name: str):
     """
     GET endpoint that returns all parts in a specific assembly that are not subassemblies
+
+    Parameters
+    ----------
+    assembly_name : str
+        Name of assembly to detach from
+
+    Returns
+    -------
+    Response
+        HTTP response object:
+            status : str
+                Status of request
+            data : JSON
+                JSON representation of a list of assembly leaves
     """
 
     try:
@@ -397,32 +622,30 @@ async def get_assembly_leaves(assembly_name: str):
         raise HTTPException(status_code=500, detail=str(ex)) from ex
 
 
-@app.get("/assembly_part", status_code=200)
-async def get_assembly():
-    """
-    GET endpoint that returns all assemblies
-    """
-
-    try:
-        result = []
-        for item in gAssembly_parts.values():
-            result.append(exporter.export(item))
-        return {"status": "Success", "data": json.dumps(result)}
-    except Exception as ex:
-        logging.exception(ex)
-        raise HTTPException(status_code=500, detail=str(ex)) from ex
-
-
 @app.get("/top_assembly", status_code=200)
 async def top_assembly():
     """
     GET endpoint that returns all top level assemblies
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    Response
+        HTTP response object:
+            status : str
+                Status of request
+            data : JSON
+                JSON representation of a list of top-level assemblies
     """
 
     try:
         result = []
-        for item in gAssembly_parts.values():
-            result.append(exporter.export(item))
+        for item in gAssemblies.values():
+            if not item.parent:
+                result.append(exporter.export(item))
         return {"status": "Success", "data": json.dumps(result)}
     except Exception as ex:
         logging.exception(ex)
@@ -433,6 +656,19 @@ async def top_assembly():
 async def get_subassembly():
     """
     GET endpoint that returns all subassemblies
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    Response
+        HTTP response object:
+            status : str
+                Status of request
+            data : JSON
+                JSON representation of a list of subassemblies
     """
 
     try:
@@ -451,6 +687,19 @@ async def get_subassembly():
 async def get_component_part():
     """
     GET endpoint that returns component parts
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    Response
+        HTTP response object:
+            status : str
+                Status of request
+            data : JSON
+                JSON representation of a list of component parts
     """
 
     try:
@@ -469,6 +718,19 @@ async def get_component_part():
 async def get_orphan_part():
     """
     GET endpoint that returns orphan parts
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    Response
+        HTTP response object:
+            status : str
+                Status of request
+            data : JSON
+                JSON representation of list of orphan parts
     """
 
     try:
@@ -486,20 +748,33 @@ async def get_orphan_part():
 @app.get("/project/{project_name}", status_code=200)
 async def get_project(project_name: str):
     """
-    GET endpoint that returns a copy of saved assembly projects
+    GET endpoint that copies saved assembly projects
+
+    Parameters
+    ----------
+    project_name : str
+        Name of project to copy
+
+    Returns
+    -------
+    Response
+        HTTP response object:
+            status : str
+                Status of request
+            message : str
+                Response message
     """
 
     try:
         if project_name not in gProjects:
             raise HTTPException(status_code=404, detail="Project name does not exist")
 
-        global gParts, gAssemblies, gAssembly_parts
+        global gParts, gAssemblies
 
         # Getting a copy of saved assembly projects
-        gParts, gAssemblies, gAssembly_parts = (
+        gParts, gAssemblies = (
             copy.deepcopy(gProjects[project_name]["gParts"]),
             copy.deepcopy(gProjects[project_name]["gAssemblies"]),
-            copy.deepcopy(gProjects[project_name]["gAssembly_parts"]),
         )
         return {"status": "Success", "message": "Project copied"}
     except Exception as ex:
@@ -513,18 +788,31 @@ async def get_project(project_name: str):
 async def post_project(project_name: str):
     """
     POST endpoint that saves an assembly project
+
+    Parameters
+    ----------
+    project_name : str
+        Name of project to save
+
+    Returns
+    -------
+    Response
+        HTTP response object:
+            status : str
+                Status of request
+            message : str
+                Response message
     """
 
     try:
-        global gParts, gAssemblies, gAssembly_parts
+        global gParts, gAssemblies
 
         # Saving assembly project
         gProjects[project_name] = {
             "gParts": gParts,
             "gAssemblies": gAssemblies,
-            "gAssembly_parts": gAssembly_parts,
         }
-        gParts, gAssemblies, gAssembly_parts = {}, {}, {}
+        gParts, gAssemblies = {}, {}
         return {"status": "Success", "message": "Project saved"}
     except Exception as ex:
         logging.exception(ex)
