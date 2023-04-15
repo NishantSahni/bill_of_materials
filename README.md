@@ -26,7 +26,7 @@ Typical usage of the APIs would be as follows:
 4. You can load copies of saved projects through a GET request on the /project endpoint with the project name. This is especially useful when you want to re-use base assembled components, and add variations of parts (materials/color)
 5. You can use the wide array of other GET endpoints to query specific parts/subassemblies or use the PUT/DELETE endpoints to make updates
 
-To view usage, you can refer the API docs, pen_builder.py or the unit tests.
+To view usage, you can refer the API docs, pen_builder.py, request_handler.py, or the unit tests.
 
 Some bonus enhancements:
 1. Swapped Flask with FastAPI for much faster asynchronous REST APIs
