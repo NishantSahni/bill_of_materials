@@ -512,7 +512,7 @@ async def attach_part_assembly(assembly_name: str, part_name: str):
 
 
 @app.get("/assembly/{assembly_name}/first", status_code=200)
-async def get_assembly_first_level_children(assembly_name: str):
+async def get_assembly_first_children(assembly_name: str):
     """
     GET endpoint that returns first level children of specific assembly
 
@@ -717,7 +717,7 @@ async def get_component_part():
 @app.get("/orphan", status_code=200)
 async def get_orphan_part():
     """
-    GET endpoint that returns orphan parts
+    GET endpoint that returns parts that have no parents or children
 
     Parameters
     ----------
