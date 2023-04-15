@@ -34,6 +34,7 @@ if __name__ == "__main__":
 
     # Saving basic assembly for re-use
     rq.save_assembly_project("base_pen")
+    # Loading a copy of the base assembly
     rq.copy_assembly_project("base_pen")
 
     barrel_types = ["metal_barrel", "plastic_barrel"]
@@ -54,7 +55,9 @@ if __name__ == "__main__":
             print(f"{project}:\n")
             rq.render_assembly(response.json()["data"])
 
+            # Saving the current assembly
             rq.save_assembly_project(project)
+            # Loading a copy of the base assembly to build more variants
             rq.copy_assembly_project("base_pen")
 
     rq.save_assembly_project(project)

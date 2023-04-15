@@ -33,7 +33,7 @@ Some bonus enhancements:
 2. More comprehensive OpenAPI documentation available at http://localhost:8000/docs
 3. Added logging to log API server errors to the web/logs/app.log file
 4. Added request_handler to effectively send requests to the API & visualize the assembly structure
-5. Added additional functionality to APIs that allows for working on multiple assembly projects
+5. Added additional functionality to APIs that allows for working on multiple assembly projects & re-use previous projects
 6. Added APIs to attach & detach parts to/from existing assemblies
 
 Project file locations:
