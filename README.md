@@ -23,7 +23,7 @@ The Bill of Materials RESTful APIs built using FastAPI reside in the [app.py](we
 
 The Pen Builder code resides in the [pen_builder.py](web/pen_builder.py) file.
 
-The request handler code to interact with the BOM APIs resides in [request_handler.py](web/request_handler.py)
+The request handler code to interact with the BOM APIs resides in [request_handler.py](web/utilities/request_handler.py)
 
 The pytest fixtures reside in the [conftest.py](web/tests/conftest.py) file.
 

@@ -787,7 +787,7 @@ async def get_project(project_name: str):
 @app.post("/project/{project_name}", status_code=201)
 async def post_project(project_name: str):
     """
-    POST endpoint that saves an assembly project
+    POST endpoint that saves an assembly project and clears current project
 
     Parameters
     ----------

@@ -4,7 +4,7 @@ Program to build different types of pens using the Bill of Materials API
 
 from anytree import RenderTree
 from anytree.importer import JsonImporter
-import request_handler as rq
+from utilities import request_handler as rq
 
 
 if __name__ == "__main__":
