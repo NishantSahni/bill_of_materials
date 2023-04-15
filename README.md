@@ -19,6 +19,20 @@ Application Structure
 
 Due to the heirarchial nature of the problem statement, the data structure used to represent the parent/child relationship is a n-ary tree implemented using AnyTree. Here each tree node has a parent attribute to reference its parent and a children attribute, which is a tuple, with references to all of its children. For more info on the data structure, you can refer its [documentation](https://anytree.readthedocs.io/en/latest/).
 
+Typical usage of the APIs would be as follows:
+1. Create parts by posting to the /part endpoint with the part name.
+2. Create assemblies by posting to the /assembly endpoint with the assembly name, list of part names to be assembled, and an optional list of subassemblies to be assembled.
+3. You can save the assembly project by posting to the /project endpoint with the project name, which will also clear the current project so you can start building a new assembly project right away.
+4. You can load copies of saved projects through a get request on the /project endpoint with the project name. This is especially useful when you want to re-use base assembled components, and add variations of parts (materials/color).
+
+Some bonus enhancements:
+1. Swapped Flask with FastAPI for much faster asynchronous REST APIs
+2. More comprehensive OpenAPI documentation available at http://localhost:8000/docs
+3. Added logging to log API server errors to the web/logs/app.log file
+4. Added request_handler to effectively send requests to the API & visualize the assembly structure
+5. Added additional functionality to APIs that allows for working on multiple assembly projects
+6. Added APIs to attach & detach parts to/from existing assemblies
+
 The Bill of Materials RESTful APIs built using FastAPI reside in the [app.py](web/app.py) file.
 
 The Pen Builder code resides in the [pen_builder.py](web/pen_builder.py) file.
