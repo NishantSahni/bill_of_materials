@@ -17,13 +17,18 @@ Application Structure
 
 <!--This section contains a short description of the application structure-->
 
+Due to the heirarchial nature of the problem statement, the data structure used to represent the parent/child relationship is a n-ary tree implemented using AnyTree. Here each tree node has a parent attribute to reference its parent and a children attribute, which is a tuple, with references to all of its children. For more info on the data structure, you can refer its [documentation](https://anytree.readthedocs.io/en/latest/).
+
 The Bill of Materials RESTful APIs built using FastAPI reside in the [app.py](web/app.py) file.
 
 The Pen Builder code resides in the [pen_builder.py](web/pen_builder.py) file.
 
+The request handler code to interact with the BOM APIs resides in [request_handler.py](web/request_handler.py)
+
 The pytest fixtures reside in the [conftest.py](web/tests/conftest.py) file.
 
 The pytest unit tests reside in the [test_app.py](web/tests/functional/test_app.py) file.
+
 
 Endpoints
 ---

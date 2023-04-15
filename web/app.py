@@ -50,7 +50,7 @@ exporter = JsonExporter(sort_keys=True)
 # Logging to file
 logging.basicConfig(
     filename="logs/app.log",
-    filemode="a",
+    filemode="w",
     format="%(name)s - %(levelname)s - %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
 )
