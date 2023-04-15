@@ -5,6 +5,8 @@ Handler to handle HTTP requests for interacting with the Bill of Materials API
 import logging
 import requests
 from fastapi import HTTPException
+from anytree import RenderTree
+from anytree.importer import JsonImporter
 
 
 # Base URL for APIs
@@ -15,7 +17,7 @@ TIMEOUT = 10
 
 # Logging to file
 logging.basicConfig(
-    filename="logs/pen_builder.log",
+    filename="logs/request_handler.log",
     filemode="w",
     format="%(name)s - %(levelname)s - %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
@@ -200,6 +202,29 @@ def attach_part_assembly(part_name: str, assembly_name: str):
                 status_code=res.status_code, detail=res.json()["detail"]
             )
         return res
+    except Exception as ex:
+        logging.exception(ex)
+        raise ex
+
+
+def render_assembly(assembly: str):
+    """
+    Function to render an assembly to display it in a readable manner
+
+    Parameters
+    ----------
+    assembly : str
+        The assembly json
+
+    Returns
+    -------
+    None
+    """
+
+    try:
+        json_importer = JsonImporter()
+        root = json_importer.import_(assembly)
+        print(RenderTree(root), "\n")
     except Exception as ex:
         logging.exception(ex)
         raise ex
