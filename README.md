@@ -19,6 +19,9 @@ Application Structure
 <!--This section contains a short description of the application structure-->
 
 The RESTful APIs built using FastAPI reside in the web/app.py file.
+The Pen Builder code resides in the web/pen_builder.py file.
+The pytest fixtures reside in the web/tests/conftest.py file.
+The pytest unit tests reside in the web/tests/functional/test_app.py file.
 
 Endpoints
 ---
@@ -39,6 +42,11 @@ $ docker-compose -f "docker-compose.yml" up -d --build
 
 Once up and running, the health page for the application can be retrieved at http://localhost:8000/health
 
+The following commands, from within this README's directory, will run the Pen Builder code for the application that uses the APIs:
+```shell script
+$ docker-compose -f "docker-compose.yml" exec web "python3" "-m" "pen_builder"
+```
+> Note: The container for the app needs to be running for this command to work. To ensure the container is running, run `docker ps` to show all running containers.
 
 Testing
 ---
