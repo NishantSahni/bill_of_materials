@@ -38,14 +38,14 @@ class AssemblyModel(BaseModel):
     subassembly_names: list | None = None
 
 
-# Key-Value pairs of all part names with their corresponding objects
+# Key-Value pairs of all part names with their corresponding AnyTree nodes
 gParts = {}
-# Key-Value pairs of all assembly names with their corresponding objects
+# Key-Value pairs of all assembly names with their corresponding AnyTree nodes
 gAssemblies = {}
 # Dictionary to store assembly projects
 gProjects = {}
 
-# To export anytree to JSON
+# To export AnyTree node to JSON
 exporter = JsonExporter(sort_keys=True)
 # Logging to file
 logging.basicConfig(
