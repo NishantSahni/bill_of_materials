@@ -37,6 +37,10 @@ def test_post_part(test_client):
     and data is successfully posted
     """
 
+    # Providing invalid part name
+    response = test_client.post("/part", json={"part_name": ""})
+    assert response.status_code == 403
+
     # Providing invalid data
     response = test_client.post("/part", json={"part": "test_part"})
     assert response.status_code == 422
@@ -126,6 +130,20 @@ def test_post_assembly(test_client, create_part):
     THEN check that the response code is valid, the expected response is returned,
     and the data is successfully posted
     """
+
+    # Providing invalid assembly name
+    response = test_client.post(
+        "/assembly",
+        json={"assembly_name": "", "part_names": ["test_part"]},
+    )
+    assert response.status_code == 403
+
+    # Providing no part names
+    response = test_client.post(
+        "/assembly",
+        json={"assembly_name": "test_assembly", "part_names": []},
+    )
+    assert response.status_code == 403
 
     # Providing part name that doesn't exist
     response = test_client.post(

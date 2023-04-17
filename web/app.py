@@ -182,6 +182,8 @@ async def post_part(part: PartModel):
     """
 
     try:
+        if not part.part_name:
+            raise HTTPException(status_code=403, detail="Empty string for part name")
         if part.part_name not in gParts:
             # Creates a new node for the part
             gParts[part.part_name] = AnyNode(id=part.part_name)
@@ -359,6 +361,11 @@ async def post_assembly(assembly: AssemblyModel):
     """
 
     try:
+        # Checking if input is valid
+        if not assembly.assembly_name or not assembly.part_names:
+            raise HTTPException(
+                status_code=403, detail="Invalid input"
+            )
         # Checking if any parts created
         if not gParts:
             raise HTTPException(status_code=403, detail="No parts created")
